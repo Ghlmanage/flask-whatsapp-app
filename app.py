@@ -16,8 +16,6 @@ twilio_whatsapp_number = os.getenv('TWILIO_WHATSAPP_NUMBER')
 # OpenAI API Key
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-client = Client(account_sid, auth_token)
-
 @app.route('/')
 def home():
     return "🎉 Your Flask App is working perfectly!"
@@ -27,7 +25,9 @@ def whatsapp_reply():
     incoming_msg = request.form.get('Body')
     sender = request.form.get('From')
 
-    response = openai.ChatCompletion.create(
+    client = openai.OpenAI()
+
+    response = client.chat.completions.create(
         model='gpt-4-turbo-preview',
         messages=[
             {"role": "system", "content": "You're a helpful virtual assistant."},
@@ -37,7 +37,8 @@ def whatsapp_reply():
 
     reply = response.choices[0].message.content
 
-    client.messages.create(
+    twilio_client = Client(account_sid, auth_token)
+    twilio_client.messages.create(
         body=reply,
         from_=twilio_whatsapp_number,
         to=sender
@@ -48,4 +49,13 @@ def whatsapp_reply():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
+
+
+
+
+
+
+
+
+
 
