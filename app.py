@@ -28,8 +28,8 @@ def whatsapp_reply():
     client = openai.OpenAI()
 
     response = client.chat.completions.create(
-        model='model='gpt-4o,
-,
+        model='gpt-4o',
+
         messages=[
             {"role": "system", "content": "You're a helpful virtual assistant."},
             {"role": "user", "content": incoming_msg}
